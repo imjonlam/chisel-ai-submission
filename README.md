@@ -11,12 +11,13 @@
  - test_LRUCache.py - PyTest file to run through tests
 
 **To Test:**
- - REQUIRES: PyTest.
+ - **REQUIRES**: PyTest
    - install: `<python> -m pip install pytest`
  - ex.: `pytest -v ./test_LRUCache.py`
 
- - for more verbose OPTIONAL: PSPEC (https://pypi.org/project/pspec/)
- -  install: `<python> -m pip install pytest-pspec`
+ - for more verbose *Optional*: pspec (https://pypi.org/project/pspec/)
+   - install: `<python> -m pip install pytest-pspec`
+ - ex.: `pytest --pspec ./test_LRUCache.py`
 
 **To Run CLI:**
  - `<python> ./cli_LRUCache.py`
