@@ -13,12 +13,6 @@
 # 3) you must be able to put the value of a key, overwrite if exists
 # 4) deleting a key that doesn't exist is a no-op
 
-class KeyExistsError(Exception):
-  '''Custom Exception class for handling existing keys in dictionary'''
-  def __init__(self, message):
-    '''Initialize KeyExistsError class'''
-    super().__init__(message)
-
 class Node:
   ''' 
   A Node representing a singular cache item 
@@ -134,9 +128,6 @@ class LRUCache:
 
     Args:
       key: represents the cache item to retrieve the value from
-
-    Raises:
-      KeyError: An error occured where the key does not exist in the dictionary
     '''
     # check if key exists
     node = self.items.get(key, None)

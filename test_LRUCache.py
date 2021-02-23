@@ -184,7 +184,7 @@ def test_delete_only_remaining(supply_one_item_cache):
   assert(supply_one_item_cache.count == 0)
   assert(not supply_one_item_cache.items)
 
-def test_delete_unknown_key1(supply_empty_cache):
+def test_delete_from_empty_cache(supply_empty_cache):
   '''DELETE: attempt to delete a key from an empty cache'''
   supply_empty_cache.delete('unknown_key')
   assert(supply_empty_cache.head is None)
@@ -192,7 +192,7 @@ def test_delete_unknown_key1(supply_empty_cache):
   assert(supply_empty_cache.count == 0)
   assert(not supply_empty_cache.items)
 
-def test_delete_unknown_key2(supply_one_item_cache):
+def test_delete_unknown_key(supply_one_item_cache):
   '''DELETE: attempt to delete a key from an non-empty cache'''
   supply_one_item_cache.delete('unknown_key')
   assert(supply_one_item_cache.count == 1)
