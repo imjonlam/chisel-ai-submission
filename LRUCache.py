@@ -10,8 +10,8 @@
 # Assumptions:
 # 1) the maximum cache size must be greater than or equal to 1
 # 2) the key must exist when calling get
-# 3) the key must not exist when trying to put an item into the cache
-# 4) the key must exist when trying to delete it
+# 3) you must be able to put the value of a key, overwrite if exists
+# 4) deleting a key that doesn't exist is a no-op
 
 class KeyExistsError(Exception):
   '''Custom Exception class for handling existing keys in dictionary'''
@@ -46,7 +46,7 @@ class LRUCache:
     head: reference to the head Node
     tail: reference to the tail Node
   '''
-  def __init__(self, max_size):
+  def __init__(self, max_size: int):
     '''Initialize LRUCache class'''
     if max_size < 1:
       raise ValueError(f'ERROR: max items cannot be less than 0, given {max_size}.')
@@ -101,19 +101,19 @@ class LRUCache:
     Args:
       key: represents the cache item to retrieve the value from
       val: corresponding value of key
-
-    Raises:
-      KeyExistsError: An error occured where the key exists in the dictionary
     '''
-    # check if key is available, throw otherwise
-    if self.items.get(key, None) is not None:
-      raise KeyExistsError(f'ERROR: the key {key} already exists.')
+    # if the key already exists, simply update its value
+    node = self.items.get(key, None)
+    if node is not None:
+      node.key, node.val = key, val
+      self.get(key)
+      return
 
     # check if cache overflow will occur
     if self.count + 1 > self.capacity:
       self.__delete_last()
 
-    # add a new node to the front of the list
+    # otherwise, we create a new node; add to front
     node = Node(key, val)
 
     # if the LinkedList is empty, simply add
@@ -141,7 +141,7 @@ class LRUCache:
     # check if key exists
     node = self.items.get(key, None)
     if node is None:
-      raise KeyError(f'ERROR: the key {key} does not exist.')
+      return
 
     # if there is only one item, simply reset
     if self.count == 1:

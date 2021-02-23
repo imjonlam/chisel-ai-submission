@@ -8,7 +8,7 @@
 #################################################
 
 import pytest
-from LRUCache import LRUCache, KeyExistsError
+from LRUCache import LRUCache
 
 @pytest.fixture
 def supply_sample_cache():
@@ -50,17 +50,6 @@ def test_getting_unknown_key(supply_sample_cache):
   '''the key must exist when trying to retrieve'''
   with pytest.raises(KeyError):
     supply_sample_cache.get('UNKNOWN_KEY')
-
-def test_inserting_existing_key(supply_sample_cache):
-  '''the key must not exist if trying to put one into the cache'''
-  with pytest.raises(KeyExistsError):
-    supply_sample_cache.put('three', 'tree')
-
-
-def test_deleting_unknown_key(supply_sample_cache):
-  '''the key must exist when trying to delete it'''
-  with pytest.raises(KeyError):
-    supply_sample_cache.delete('UNKNOWN_KEY')
 
 ##########################
 # Testing for GET        #
@@ -130,12 +119,32 @@ def test_put_overflow1(supply_sample_cache):
   assert(supply_sample_cache.items.get('one', None) is None)
 
 def test_put_overflow2(supply_one_item_cache):
-  '''test overflow of acache with capacity of 1'''
+  '''test overflow of a cache with capacity of 1'''
   supply_one_item_cache.put('two', 2)
   assert(supply_one_item_cache.count == 1)
   assert(supply_one_item_cache.head == supply_one_item_cache.tail)
   assert(supply_one_item_cache.items.get('one', None) is None)
   assert(supply_one_item_cache.items.get('two', None) is not None)
+
+def test_put_existing_key1(supply_sample_cache):
+  '''inserting an existing key - updates value, puts to front'''
+  initial_count = supply_sample_cache.count
+
+  supply_sample_cache.put('two', 20)
+  assert(supply_sample_cache.count == initial_count)
+  assert(supply_sample_cache.head.key == 'two')
+  assert(supply_sample_cache.head.val == 20)
+
+def test_put_existing_key2(supply_sample_cache):
+  '''inserting an existing key into least used item - updates value, puts to front'''
+  initial_count = supply_sample_cache.count
+  tail_prev_val = supply_sample_cache.tail.prev
+
+  supply_sample_cache.put('one', 10)
+  assert(supply_sample_cache.count == initial_count)
+  assert(supply_sample_cache.head.key == 'one')
+  assert(supply_sample_cache.head.val == 10)
+  assert(supply_sample_cache.tail.val == tail_prev_val.val)
 
 # ##########################
 # # Testing for DELETE     #
@@ -164,6 +173,21 @@ def test_delete_only_remaining(supply_one_item_cache):
   assert(supply_one_item_cache.tail is None)
   assert(supply_one_item_cache.count == 0)
   assert(not supply_one_item_cache.items)
+
+def test_delete_unknown_key1(supply_empty_cache):
+  '''attempt to delete a key from an empty cache'''
+  supply_empty_cache.delete('unknown_key')
+  assert(supply_empty_cache.head is None)
+  assert(supply_empty_cache.tail is None)
+  assert(supply_empty_cache.count == 0)
+  assert(not supply_empty_cache.items)
+
+def test_delete_unknown_key2(supply_one_item_cache):
+  '''attempt to delete a key from an non-empty cache'''
+  supply_one_item_cache.delete('unknown_key')
+  assert(supply_one_item_cache.count == 1)
+  assert(supply_one_item_cache.head == supply_one_item_cache.tail)
+  assert(supply_one_item_cache.items.get('one', None) is not None)
 
 # ##########################
 # # Testing for RESET      #
